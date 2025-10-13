@@ -28,9 +28,11 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
     if (!password) return res.status(400).json({ error: 'La contraseña es obligatoria' });
 
     const passwordHash = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({ name, email, passwordHash });
     res.status(201).json(newUser.toSafeJSON());
   } catch (error) {
@@ -45,10 +47,10 @@ router.put('/:id', async (req, res) => {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    const updates = { name, email };
-    if (password) updates.passwordHash = await bcrypt.hash(password, 10);
+    const updateData = { name, email };
+    if (password) updateData.passwordHash = await bcrypt.hash(password, 10);
 
-    await user.update(updates);
+    await user.update(updateData);
     res.json(user.toSafeJSON());
   } catch (error) {
     res.status(500).json({ error: error.message });
