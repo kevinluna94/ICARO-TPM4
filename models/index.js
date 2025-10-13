@@ -1,23 +1,30 @@
 const { Sequelize } = require('sequelize');
-const path = require('path');
+require('dotenv').config();
 
-const isTest = process.env.NODE_ENV === 'test';
-
-// Use SQLite for simplicity. You can switch to another dialect via env.
-const sequelize = new Sequelize({
-  dialect: process.env.DB_DIALECT || 'sqlite',
-  storage: process.env.DB_STORAGE || path.join(__dirname, '..', (isTest ? 'test.sqlite' : 'database.sqlite')),
-  logging: false,
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT || 'mysql',
+    port: process.env.DB_PORT || 3306,
+    logging: false,
+  }
+);
 
 // Load models
 const User = require('./user')(sequelize);
-const Card = require('./card')(sequelize);
+const Category = require('./category')(sequelize);
+const Product = require('./product')(sequelize);
 
 // Associations
-User.hasMany(Card, { foreignKey: 'user_id', as: 'cards' });
-Card.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Category.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
+Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });
 
-const db = { sequelize, Sequelize, User, Card };
+User.hasMany(Product, { foreignKey: 'user_id', as: 'products' }); // opcional si cada producto tiene creador
+Product.belongsTo(User, { foreignKey: 'user_id', as: 'user' }); // opcional
+
+const db = { sequelize, Sequelize, User, Category, Product };
 
 module.exports = db;

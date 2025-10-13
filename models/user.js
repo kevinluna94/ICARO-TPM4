@@ -7,6 +7,7 @@ module.exports = (sequelize) => {
       const { id, name, email, createdAt, updatedAt } = this.get({ plain: true });
       return { id, name, email, createdAt, updatedAt };
     }
+
     async checkPassword(password) {
       if (!this.passwordHash) return false;
       return bcrypt.compare(password, this.passwordHash);
@@ -16,7 +17,7 @@ module.exports = (sequelize) => {
   User.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true,
       },
@@ -28,9 +29,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          isEmail: true,
-        },
+        validate: { isEmail: true },
       },
       passwordHash: {
         type: DataTypes.STRING,
