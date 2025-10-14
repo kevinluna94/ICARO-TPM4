@@ -8,6 +8,7 @@ const { sequelize } = require('./models');
 const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get('/ping', (req, res) => {
 app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 // Inicializar DB
 (async () => {
