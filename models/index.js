@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+// Inicializar Sequelize
 const sequelize = process.env.DB_URL
   ? new Sequelize(process.env.DB_URL, { dialect: 'mysql', logging: false })
   : new Sequelize(
@@ -26,6 +27,16 @@ Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });
 
 User.hasMany(Product, { foreignKey: 'user_id', as: 'products' });
 Product.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+// Verificar conexión
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexión a la base de datos establecida correctamente.');
+  } catch (err) {
+    console.error('Error al conectar con la base de datos:', err);
+  }
+})();
 
 // Exportar
 const db = { sequelize, Sequelize, User, Category, Product };

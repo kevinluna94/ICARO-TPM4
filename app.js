@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 // Rutas de prueba
 app.get('/ping', (req, res) => {
-  res.send('Servidor activo en puerto 3000');
+  res.send('Servidor activo');
 });
 
 // Rutas
@@ -38,10 +38,10 @@ app.use('/auth', authRoutes);
 // Inicializar DB
 (async () => {
   try {
-    await sequelize.sync();
-    console.log('Database synchronized');
+    await sequelize.sync(); // Ojo: en producción, usar migraciones es mejor
+    console.log('✅ Database synchronized');
   } catch (e) {
-    console.error('Database sync error:', e);
+    console.error('❌ Database sync error:', e);
   }
 })();
 
@@ -52,6 +52,7 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
+  console.error(err);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500).send('Error del servidor');
@@ -59,6 +60,6 @@ app.use((err, req, res, next) => {
 
 // LEVANTAR EL SERVIDOR
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
