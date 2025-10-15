@@ -2,16 +2,13 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Agrega la columna image_url a la tabla products
+ async up(queryInterface, Sequelize) {
+  const table = await queryInterface.describeTable('products');
+  if (!table.image_url) {
     await queryInterface.addColumn('products', 'image_url', {
       type: Sequelize.STRING,
       allowNull: true,
     });
-  },
-
-  async down(queryInterface, Sequelize) {
-    // Elimina la columna image_url de la tabla products
-    await queryInterface.removeColumn('products', 'image_url');
   }
-};
+}
+}
